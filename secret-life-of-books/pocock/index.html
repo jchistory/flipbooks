@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width", intial-scale=1.0">
+
+    <title>Mary Anne Bessie Pocock - Autograph Book</title>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        fone-family: Arial, sans-serif;
+        background: #f4f1eb;
+        color: #333;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 5px;
+      }
+
+      #viewer {
+        display: flex;
+        justify-content: center;
+        margin: 25px auto;
+        width: 100%;
+      }
+
+      .xontrols {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: 1px solid #888;
+        border-radius: 5px;
+        background: white;
+      }
+
+      button:hover {
+        background: #ddd;
+      }        
+    </style>    
+  </head>
+
+  <body>
+    <h1>Mary Anne "Bessie" Pocock</h1>
+    <p>Autograph Book, 1903-1916</p>
+
+    <div id="viewer">
+      <dix id="book"></dix>
+    </div>
+
+    <div class="controls">
+      <button id="previous">Previous</button>
+      <span id="page-number">Page 1 of 92</span>
+      <button id="next">Next</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+
+    <script>
+      //generate filenames for all 92 pages
+      const images = [];
+
+      for (let i = 1; i <=92; i++) {
+        const number = String(i).padStart(3, "0");
+        images.push("pages/page_" + number + ".jpg");
+      }
+
+      //create the flipbook
+       const pageFlip = new St.PageFlip(
+      document.getElementById("book"),
+      {
+        width: 450,
+        height: 600,
+        size: "stretch",
+        minWidth: 200,
+        maxWidth: 450,
+        minHeight: 267,
+        maxHeight: 600,
+        showCover: true,
+        flippingTime: 700,
+        drawShadow: true,
+        usePortrait: true
+      }
+    );
+
+    // Load the scanned images
+    pageFlip.loadFromImages(images);
+
+    // Previous button
+    document.getElementById("previous").onclick = function() {
+      pageFlip.flipPrev("bottom");
+    };
+
+    // Next button
+    document.getElementById("next").onclick = function() {
+      pageFlip.flipNext("bottom");
+    };
+
+    // Display the current page number
+    pageFlip.on("flip", function(event) {
+      document.getElementById("page-number").textContent =
+        "Page " + (event.data + 1) + " of 92";
+    });
+    </script>
+  </body>
+</html>
