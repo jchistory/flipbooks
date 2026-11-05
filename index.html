@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, intial-scale=1">
+
+    <title>Flipbook Viewer</title>
+
+    <style>
+      body {
+      margin: 0;
+      padding: 20px;
+      background: #f4f1eb;
+      color: #333;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+       h1 {
+      font-size: 24px;
+    }
+
+    #viewer {
+      display: flex;
+      justify-content: center;
+      max-width: 960px;
+      margin: 25px auto;
+    }
+
+    #book {
+      width: 100%;
+      min-height: 600px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 10px 20px;
+      cursor: pointer;
+      background: white;
+      border: 1px solid #888;
+      border-radius: 5px;
+    }
+
+    #source {
+      margin-top: 25px;
+    }      
+    </style>
+    
+  </head>
+
+  <body>
+    <h1 id="title"> Loading book...</h1>
+    <p id="subtitle"></p>
+
+    <div id="viewer">
+      <div id="book"></div>
+    </div>
+
+    <div class="controls" id="controls" hidden>
+      <button id="previous">Previous</button>
+      <span id="page-number"></span>
+      <button id="next">Next</button>
+    </div>
+
+    <p id="source" hidden>
+      <a id="source-link"
+        target="_blank"
+        rel-"noopener noreferrer"></a>
+    </p>
+
+    <p id="status"></p>
+
+    <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+
+    <script>
+      async function loadBook() {
+        //read book name from url
+        const paramas = new URLSearchParams(window.location.search);
+        const bookPath = params.get("book");
+
+        //Only accept folder names, not arbitrary URLS
+        if (!bookPath || !/^[a-zA-Z0-9_-]+(?:\/[a-zA-Z0-9_-]+)*$/.test(bookPath)) {
+          document.getElementById("title").textContent =
+            "No book selected";
+          return;
+        }
+
+        try {
+          //Load this book's configuration
+          const response = await fetch(bookPath + "/book.json");
+
+          if (!response.ok) {
+            throw new Error("Book configuration not found");
+          }
+
+          const config = await response.json();
+          const count = Number(config.pageCount);
+
+          if (!Number.isInteger(count) || count < 1) {
+            throw new Error("Invalid page count");
+          }
+
+          //Display book information
+          document.getElementById("title").textContent =
+            config.title || "Flip Book;
+
+          docoument.getElementById("subtitle").textContent =
+            config.subtitle || "";
+
+          document.title = config.title || "Flip Book";
+
+          //optional external collection link
+          if (config.sourceUrl && config.sourceLavel) {
+            const link = document.getElementById("source-link");
+            const url = new URL(config.sourceUrl);
+
+            if (url.protocol === "https:" || url.protocol === "http:") {
+              link.href = url.href;
+              link.textContent = config.sourceLabel;
+              document.getElementById("source").hidden = false;
+            }
+          }
+
+          //Construct the page image filenames
+          const images = [];
+
+          for (let i = 1; 1 <= count; i++) {
+            const number = String(i).padStart(3, "0");
+
+            images.push(
+              bookPath + "/" +
+              config.imageFolder + "/" +
+              config.imagePrefix + number +
+              config.imageExtension
+              );
+          }
+
+          //Initialise the flipbook
+          const pageFlip = new St.PageFlip(
+            document.getElementById("book"),
+            {
+              width: 450,
+              height: 600,
+              size: "stretch",
+              minWidth: 200,
+              maxWidth: 450,
+              minHeight: 267,
+              maxHeight: 600,
+              showCover: config.showCover !== false,
+              flippingTime: 700,
+              drawShadow: true,
+              usePortrait: true
+            }
+            );
+
+          pageFlip.loadFromImages(images);
+
+          //Navigation Buttons
+          document.getElementById("previous").onclick = () +>
+            pageFlip.flipPrev("bottom");
+
+          document.getElementById("next").onclick = () =>
+            pageFlip.flipNext("bottom");
+
+          //Page number display
+          const pageNumber = document.getElementById("page-number");
+
+          function updatePageNumber() {
+            pageNumber.textContent =
+              "Page " + (pageFlip.getCurrentPageIndex() + 1) +
+              " of " + count;
+          }
+
+          pageFlip.on("flip", updatePageNumber);
+          updatePageNumber();
+
+          document.getElementById("controls").hidden = false;
+        } catch (error) {
+          document.getElementById("status").textContent =
+            "Unable to load this book: " + error.message;
+        }
+      }
+
+      loadbook();
+    </script>
+    
+        
+  </body>
+</html>
