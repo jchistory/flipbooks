@@ -81,7 +81,7 @@
     <script>
       async function loadBook() {
         //read book name from url
-        const paramas = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(window.location.search);
         const bookPath = params.get("book");
 
         //Only accept folder names, not arbitrary URLS
@@ -108,15 +108,15 @@
 
           //Display book information
           document.getElementById("title").textContent =
-            config.title || "Flip Book;
+            config.title || "Flip Book";
 
-          docoument.getElementById("subtitle").textContent =
+          document.getElementById("subtitle").textContent =
             config.subtitle || "";
 
           document.title = config.title || "Flip Book";
 
           //optional external collection link
-          if (config.sourceUrl && config.sourceLavel) {
+          if (config.sourceUrl && config.sourceLabel) {
             const link = document.getElementById("source-link");
             const url = new URL(config.sourceUrl);
 
@@ -130,7 +130,7 @@
           //Construct the page image filenames
           const images = [];
 
-          for (let i = 1; 1 <= count; i++) {
+          for (let i = 1; i <= count; i++) {
             const number = String(i).padStart(3, "0");
 
             images.push(
@@ -162,7 +162,7 @@
           pageFlip.loadFromImages(images);
 
           //Navigation Buttons
-          document.getElementById("previous").onclick = () +>
+          document.getElementById("previous").onclick = () =>
             pageFlip.flipPrev("bottom");
 
           document.getElementById("next").onclick = () =>
@@ -187,7 +187,7 @@
         }
       }
 
-      loadbook();
+      loadBook();
     </script>
     
         
