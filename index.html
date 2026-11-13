@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, intial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Flipbook Viewer</title>
 
@@ -66,12 +66,17 @@
       <button id="previous">Previous</button>
       <span id="page-number"></span>
       <button id="next">Next</button>
+
+      <label for="jump-page">Jump to page:</label>
+      <input type="number" id="jump-page"
+        min="1" style="width: 65px;">
+      <button id="jump-button">Go</button>
     </div>
 
     <p id="source" hidden>
       <a id="source-link"
         target="_blank"
-        rel-"noopener noreferrer"></a>
+        rel="noopener noreferrer"></a>
     </p>
 
     <p id="status"></p>
@@ -179,6 +184,23 @@
 
           pageFlip.on("flip", updatePageNumber);
           updatePageNumber();
+
+          //jump to a specific page
+          const jumpInput = document.getElementById("jump-page");
+
+          jumpInput.max = count;
+
+          document.getElementById("jump-button").onclick = () => {
+            const page = jumpInput.valueAsNumber;
+
+            if (!Number.isInteger(page) || page < 1 || page > count) {
+              alert("Enter a page number between 1 and " + count);
+              return;
+            }
+
+            pageFlip.turnToPage(page - 1);
+            updatePageNumber();
+          };
 
           document.getElementById("controls").hidden = false;
         } catch (error) {
